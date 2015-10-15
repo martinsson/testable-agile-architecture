@@ -39,37 +39,27 @@ LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath,
     var lang = {
         id: undefined,
         displayMode: 'biplan',
-        children: {
-            face: []
-        }
+        face: []
+
     };
     debug('POST lang(1/4) get pdfinfo: %s - %s', parentEntityKey.directory(), pdfAbsolutePath);
-    return Promise.all([
-        self.getPdfInfo(pdfAbsolutePath).then(function (pdfInfo) {
-            lang.id = pdfInfo.id;
-            lang.children.face = _.times(pdfInfo.numberOfPages, function () {
-                return nodeUuid.v1();
-            });
-            return pdfInfo;
-        })
-    ]).then(function (pdfMetaData) {
-        debug('POST lang(2/4) create BV doc: %s - %s - %s page(s)', parentEntityKey.directory(), lang.id, lang.children.face.length);
-        langEntityKey = parentEntityKey.append('lang', lang.id);
-        var faceService = new FaceService(repository);
-        var pdfInfo = pdfMetaData[1];
-        return Promise.map(lang.children.face, function (faceId) {
-            // TODO: each face should have its own dimensions from single page PDF
-            return faceService.postFace(langEntityKey, {
-                id: faceId,
+    return self.getPdfInfo(pdfAbsolutePath).then(function (pdfInfo) {
+        lang.id = pdfInfo.id;
+        lang.face = _.times(pdfInfo.numberOfPages, function () {
+            return faceService.buildFace({
+                id: nodeUuid.v1(),
                 dimensions: {
                     width: pdfInfo.width,
                     height: pdfInfo.height
                 }
             });
         });
+        debug('POST lang(2/4) create BV doc: %s - %s - %s page(s)', parentEntityKey.directory(), lang.id, lang.face.length);
+        langEntityKey = parentEntityKey.append('lang', lang.id);
+        var faceService = new FaceService(repository);
         debug('POST lang(4/4) create split job: %s', langEntityKey.directory());
-        var faceRoutes = lang.children.face.map(function (faceId) {
-            return [langEntityKey.directory(), 'face', faceId].join('/');
+        var faceRoutes = lang.face.map(function (face) {
+            return [langEntityKey.directory(), 'face', face.id].join('/');
         });
         var bvIds = langEntityKey.directory().split('/');
         var jobTitle = [bvIds[2], bvIds[4], bvIds[6]].join('_');
