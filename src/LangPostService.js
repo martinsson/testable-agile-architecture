@@ -38,18 +38,15 @@ LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath,
     var langEntityKey;
     var lang = {
         id: undefined,
-        title: undefined,
         displayMode: 'biplan',
         children: {
-            face: [],
-            media: []
+            face: []
         }
     };
     debug('POST lang(1/4) get pdfinfo: %s - %s', parentEntityKey.directory(), pdfAbsolutePath);
     return Promise.all([
         self.getPdfInfo(pdfAbsolutePath).then(function (pdfInfo) {
-            lang.id = pdfInfo.lang
-            lang.title = pdfInfo.title;
+            lang.id = pdfInfo.id;
             lang.children.face = _.times(pdfInfo.numberOfPages, function () {
                 return nodeUuid.v1();
             });
@@ -81,7 +78,6 @@ LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath,
             originalFilepath: pdfAbsolutePath,
             faceRoutes: faceRoutes,
             startSplit: 1,
-            endSplit: lang.children.face.length
         }];
         return Promise.map(jobsPayload, function (jobPayload) {
             var job;
@@ -95,7 +91,6 @@ LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath,
                             reject(err);
                         }
                     });
-                // TODO job TTL, removeOnComplete...
             });
         })
     });
