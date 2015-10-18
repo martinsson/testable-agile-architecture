@@ -13,8 +13,7 @@ var FaceService = require('./face/FaceService');
 
 var debug = require('debug')('LangPostService');
 
-function LangPostService(repository, jobQueue, fileSystemContext) {
-    this.repository = repository;
+function LangPostService(jobQueue, fileSystemContext) {
     this.queue = jobQueue;
     this.workingPath = fileSystemContext.workingPath;
     this.splitJobConfig = {
@@ -22,57 +21,25 @@ function LangPostService(repository, jobQueue, fileSystemContext) {
         attempts: 5
     };
 }
-LangPostService.prototype.getPdfInfo = function LangPostService_getTitle(pdfAbsolutePath) {
-    return pdfUtility.getPdfInfo(pdfAbsolutePath).then(function (pdfInfo) {
-        return pdfInfo;
-    });
-};
-LangPostService.prototype.getPdfLanguage = function LangPostService_getTitle(pdfAbsolutePath) {
-    return pdfUtility.getPdfLanguage(pdfAbsolutePath).then(function (language) {
-        return language ? language : 'fr';
-    });
-};
-LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath, langId) {
+
+LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
     var self = this;
-    var repository = this.repository;
-    var langEntityKey;
     var lang = {
         id: undefined,
         displayMode: 'biplan',
         face: []
 
     };
-    debug('POST lang(1/4) get pdfinfo: %s - %s', parentEntityKey.directory(), pdfAbsolutePath);
-    return self.getPdfInfo(pdfAbsolutePath).then(function (pdfInfo) {
-        lang.id = pdfInfo.id;
-        lang.face = _.times(pdfInfo.numberOfPages, function () {
-            return faceService.buildFace({
-                id: nodeUuid.v1(),
-                dimensions: {
-                    width: pdfInfo.width,
-                    height: pdfInfo.height
-                }
-            });
-        });
-        debug('POST lang(2/4) create BV doc: %s - %s - %s page(s)', parentEntityKey.directory(), lang.id, lang.face.length);
-        langEntityKey = parentEntityKey.append('lang', lang.id);
-        var faceService = new FaceService(repository);
-        debug('POST lang(4/4) create split job: %s', langEntityKey.directory());
-        var faceRoutes = lang.face.map(function (face) {
-            return [langEntityKey.directory(), 'face', face.id].join('/');
-        });
-        var bvIds = langEntityKey.directory().split('/');
-        var jobTitle = [bvIds[2], bvIds[4], bvIds[6]].join('_');
-        var jobsPayload = [{
-            title: jobTitle,
-            originalFilepath: pdfAbsolutePath,
-            faceRoutes: faceRoutes,
-            startSplit: 1,
-        }];
+    return pdfUtility.getPdfInfo(pdfAbsolutePath).then(function (pdfInfo) {
+        lang.id = defineLang(forcedLangId, pdfInfo);
+
+        lang.face = buildFaces(pdfInfo);
+
+        var jobsPayload = buildDataForSplitJob(parentEntityKey, lang, pdfAbsolutePath);
+
         return Promise.map(jobsPayload, function (jobPayload) {
-            var job;
             return new Promise(function (resolve, reject) {
-                job = self.queue.create(self.splitJobConfig.queueName, jobPayload)
+                var job = self.queue.create(self.splitJobConfig.queueName, jobPayload)
                     .attempts(self.splitJobConfig.attempts)
                     .save(function (err) {
                         if (!err) {
@@ -85,4 +52,45 @@ LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath,
         })
     });
 };
+
+
+function buildFaces(pdfInfo) {
+    return _.times(pdfInfo.numberOfPages, function () {
+        var faceService = new FaceService(repository);
+        return faceService.buildFace({
+            id: nodeUuid.v1(),
+            dimensions: {
+                width: pdfInfo.width,
+                height: pdfInfo.height
+            }
+        });
+    });
+}
+function defineLang(forcedLangId, pdfInfo) {
+    var langId;
+    if (forcedLangId) {
+        langId = forcedLangId;
+    } else if (pdfInfo.lang) {
+        langId = pdfInfo.lang;
+    } else {
+        langId = 'fr';
+    }
+    return langId;
+}
+function buildDataForSplitJob(parentEntityKey, lang, pdfAbsolutePath) {
+    var langEntityKey = parentEntityKey.append('lang', lang.id);
+    var faces = lang.face;
+    var faceRoutes = faces.map(function (face) {
+        return [langEntityKey.directory(), 'face', face.id].join('/');
+    });
+    var bvIds = langEntityKey.directory().split('/');
+    var jobTitle = [bvIds[2], bvIds[4], bvIds[6]].join('_');
+    var jobsPayload = [{
+        title: jobTitle,
+        originalFilepath: pdfAbsolutePath,
+        faceRoutes: faceRoutes,
+        startSplit: 1,
+    }];
+    return jobsPayload;
+}
 module.exports = LangPostService;
