@@ -60,21 +60,26 @@ describe('LangBuilder.buildLang()', function () {
     describe('sends a splitJob to the message queue', function () {
         it('contains the path of the pdf', function() {
             var saveSpy = sinon.spy();
-            var attemptsStub = function () {
-                return {save: saveSpy}
-            };
-            var createStub = sinon.stub();
 
+            var attemptsStub = sinon.stub();
+            attemptsStub
+                .withArgs(5)
+                .returns({save: saveSpy});
+
+            var createStub = sinon.stub();
             var expectedPayload = {originalFilepath: pdPath};
-            createStub.withArgs('job-split-pdf', sinon.match(expectedPayload));
-            createStub.returns({attempts: attemptsStub});
+            createStub
+                .withArgs('job-split-pdf', sinon.match(expectedPayload))
+                .returns({attempts: attemptsStub});
 
             var jobQueue = {
                 create: createStub
             };
+
             var langBuilder = new LangBuilder(jobQueue, fileSystemContext, pdfUtility);
 
             langBuilder.buildLang(parentEntityKey, pdPath);
+
             sinon.assert.calledOnce(saveSpy)
 
         })
