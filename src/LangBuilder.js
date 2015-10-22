@@ -1,3 +1,4 @@
+
 var _ = require('lodash');
 var PdfUtility = require('./thirdParty/PdfUtility');
 var nodeUuid = require('node-uuid');
@@ -5,36 +6,36 @@ var nodeUuid = require('node-uuid');
 var Face = require('./restOfTheCode/Face');
 
 
-function LangBuilder(jobQueue, fileSystemContext, pdfUtility) {
-    this.queue = jobQueue;
-    this.workingPath = fileSystemContext.workingPath;
-    this.pdfUtility = pdfUtility
-    this.splitJobConfig = {
+function LangBuilder(jobQueue, pdfUtility) {
+    var queue = jobQueue;
+    var splitJobConfig = {
         queueName: 'job-split-pdf',
         attempts: 5
     };
+
+    return {
+        buildLang: function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
+            var pdfInfo = pdfUtility.getPdfInfo(pdfAbsolutePath);
+            var langId = defineLang(forcedLangId, pdfInfo);
+            var faces = buildFaces(pdfInfo);
+
+            var lang = {
+                id: langId,
+                displayMode: 'portrait',
+                face: faces
+            };
+
+            var langEntityKey = parentEntityKey.append('lang', langId);
+
+            var jobPayload = buildDataForSplitJob(langEntityKey, faces, pdfAbsolutePath);
+            queue.create(splitJobConfig.queueName, jobPayload)
+                .attempts(splitJobConfig.attempts)
+                .save();
+
+            return lang;
+        }
+    }
 }
-
-LangBuilder.prototype.buildLang = function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
-    var pdfInfo = this.pdfUtility.getPdfInfo(pdfAbsolutePath);
-    var langId = defineLang(forcedLangId, pdfInfo);
-    var faces = buildFaces(pdfInfo);
-
-    var lang = {
-        id: langId,
-        displayMode: 'portrait',
-        face: faces
-    };
-
-    var langEntityKey = parentEntityKey.append('lang', langId);
-
-    var jobPayload = buildDataForSplitJob(langEntityKey, faces, pdfAbsolutePath);
-    this.queue.create(this.splitJobConfig.queueName, jobPayload)
-        .attempts(this.splitJobConfig.attempts)
-        .save();
-
-    return lang;
-};
 
 
 function buildFaces(pdfInfo) {

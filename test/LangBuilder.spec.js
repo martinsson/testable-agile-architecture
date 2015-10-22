@@ -28,7 +28,7 @@ describe('LangBuilder.buildLang()', function () {
                     }
                 }
             };
-            var langBuilder = new LangBuilder(jobQueue, fileSystemContext, pdfUtility);
+            var langBuilder = new LangBuilder(jobQueue, pdfUtility);
 
             var parentEntityKey = EntityKey.fromPath("/region/eu");
             var pdPath = "/tmp/pdfFile.pdf";
@@ -76,7 +76,7 @@ describe('LangBuilder.buildLang()', function () {
                 create: createStub
             };
 
-            var langBuilder = new LangBuilder(jobQueue, fileSystemContext, pdfUtility);
+            var langBuilder = new LangBuilder(jobQueue, pdfUtility);
 
             langBuilder.buildLang(parentEntityKey, pdPath);
 
