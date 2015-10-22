@@ -5,5 +5,9 @@
     "kue": "^0.9.6",
     "lodash": "^3.10.1",
     "node-uuid": "^1.4.3"
+  },
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "sinon": "^1.17.2"
   }
 }

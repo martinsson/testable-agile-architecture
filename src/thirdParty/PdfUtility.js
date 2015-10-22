@@ -9,3 +9,5 @@ function PdfUtility() {
         }
     }
 }
+
+module.exports = PdfUtility;

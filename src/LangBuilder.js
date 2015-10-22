@@ -2,10 +2,10 @@ var _ = require('lodash');
 var PdfUtility = require('./thirdParty/PdfUtility');
 var nodeUuid = require('node-uuid');
 
-var Face = require('./face/Face');
+var Face = require('./restOfTheCode/Face');
 
 
-function LangPostService(jobQueue, fileSystemContext, pdfUtility) {
+function LangBuilder(jobQueue, fileSystemContext, pdfUtility) {
     this.queue = jobQueue;
     this.workingPath = fileSystemContext.workingPath;
     this.pdfUtility = pdfUtility
@@ -15,7 +15,7 @@ function LangPostService(jobQueue, fileSystemContext, pdfUtility) {
     };
 }
 
-LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
+LangBuilder.prototype.buildLang = function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
     var pdfInfo = this.pdfUtility.getPdfInfo(pdfAbsolutePath);
     var langId = defineLang(forcedLangId, pdfInfo);
     var faces = buildFaces(pdfInfo);
@@ -28,7 +28,7 @@ LangPostService.prototype.postLang = function (parentEntityKey, pdfAbsolutePath,
 
     var langEntityKey = parentEntityKey.append('lang', langId);
 
-    var jobPayload = buildDataForSplitJob(langEntityKey, lang, pdfAbsolutePath);
+    var jobPayload = buildDataForSplitJob(langEntityKey, faces, pdfAbsolutePath);
     this.queue.create(this.splitJobConfig.queueName, jobPayload)
         .attempts(this.splitJobConfig.attempts)
         .save();
@@ -74,4 +74,4 @@ function buildDataForSplitJob(langEntityKey, faces, pdfAbsolutePath) {
     };
 }
 
-module.exports = LangPostService;
+module.exports = LangBuilder;
