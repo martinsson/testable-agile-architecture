@@ -6,12 +6,18 @@ var LangBuilder = require('../src/LangBuilder');
 var EntityKey = require('../src/restOfTheCode/EntityKey');
 
 describe('LangBuilder.buildLang()', function () {
+    var pdfUtility = new PdfUtility();
+    var fileSystemContext = {workingPath: os.tmpdir()};
+
+    var parentEntityKey = EntityKey.fromPath("/region/eu");
+    var pdPath = "/tmp/pdfFile.pdf";
+
+
     describe('lang.id', function () {
         it('is the language found in the pdf file', function () {
 
         });
         it('can be explicitly overridden', function () {
-            var pdfUtility = new PdfUtility();
 
             var jobQueue = {
                 create: function () {
@@ -22,8 +28,6 @@ describe('LangBuilder.buildLang()', function () {
                     }
                 }
             };
-
-            var fileSystemContext = {workingPath: os.tmpdir()};
             var langBuilder = new LangBuilder(jobQueue, fileSystemContext, pdfUtility);
 
             var parentEntityKey = EntityKey.fromPath("/region/eu");
@@ -52,4 +56,27 @@ describe('LangBuilder.buildLang()', function () {
             });
         })
     });
+
+    describe('sends a splitJob to the message queue', function () {
+        it('contains the path of the pdf', function() {
+            var saveSpy = sinon.spy();
+            var attemptsStub = function () {
+                return {save: saveSpy}
+            };
+            var createStub = sinon.stub();
+
+            var expectedPayload = {originalFilepath: pdPath};
+            createStub.withArgs('job-split-pdf', sinon.match(expectedPayload));
+            createStub.returns({attempts: attemptsStub});
+
+            var jobQueue = {
+                create: createStub
+            };
+            var langBuilder = new LangBuilder(jobQueue, fileSystemContext, pdfUtility);
+
+            langBuilder.buildLang(parentEntityKey, pdPath);
+            sinon.assert.calledOnce(saveSpy)
+
+        })
+    })
 });
