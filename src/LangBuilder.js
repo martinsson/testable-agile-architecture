@@ -13,27 +13,36 @@ function LangBuilder(jobQueue, pdfUtility) {
         attempts: 5
     };
 
+    function submitBackgroundJob(parentEntityKey, lang, pdfAbsolutePath) {
+        var langEntityKey = parentEntityKey.append('lang', lang.id);
+        var jobPayload = buildDataForSplitJob(langEntityKey, lang.face, pdfAbsolutePath);
+        queue.create(splitJobConfig.queueName, jobPayload)
+            .attempts(splitJobConfig.attempts)
+            .save();
+    }
+
     return {
         buildLang: function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
-            var pdfInfo = pdfUtility.getPdfInfo(pdfAbsolutePath);
-            var langId = defineLang(forcedLangId, pdfInfo);
-            var faces = buildFaces(pdfInfo);
 
-            var lang = {
-                id: langId,
-                displayMode: 'portrait',
-                face: faces
-            };
+            var lang = buildLang(pdfAbsolutePath, forcedLangId);
 
-            var langEntityKey = parentEntityKey.append('lang', langId);
-
-            var jobPayload = buildDataForSplitJob(langEntityKey, faces, pdfAbsolutePath);
-            queue.create(splitJobConfig.queueName, jobPayload)
-                .attempts(splitJobConfig.attempts)
-                .save();
+            submitBackgroundJob(parentEntityKey, lang, pdfAbsolutePath);
 
             return lang;
         }
+    };
+
+    function buildLang(pdfAbsolutePath, forcedLangId) {
+        var pdfInfo = pdfUtility.getPdfInfo(pdfAbsolutePath);
+        var langId = defineLang(forcedLangId, pdfInfo);
+        var faces = buildFaces(pdfInfo);
+
+        var lang = {
+            id: langId,
+            displayMode: 'portrait',
+            face: faces
+        };
+        return lang;
     }
 }
 
