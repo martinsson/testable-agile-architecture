@@ -6,19 +6,12 @@ var nodeUuid = require('node-uuid');
 var Face = require('./restOfTheCode/Face');
 
 
-function LangBuilder(jobQueue, pdfUtility) {
-    var queue = jobQueue;
-    var splitJobConfig = {
-        queueName: 'job-split-pdf',
-        attempts: 5
-    };
+function LangBuilder(myQueue, pdfUtility) {
 
     function submitBackgroundJob(parentEntityKey, lang, pdfAbsolutePath) {
         var langEntityKey = parentEntityKey.append('lang', lang.id);
         var jobPayload = buildDataForSplitJob(langEntityKey, lang.face, pdfAbsolutePath);
-        queue.create(splitJobConfig.queueName, jobPayload)
-            .attempts(splitJobConfig.attempts)
-            .save();
+        myQueue.submit(jobPayload);
     }
 
     return {

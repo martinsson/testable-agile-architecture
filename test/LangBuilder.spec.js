@@ -19,16 +19,10 @@ describe('LangBuilder.buildLang()', function () {
         });
         it('can be explicitly overridden', function () {
 
-            var jobQueue = {
-                create: function () {
-                    return {
-                        attempts: function () {
-                            return {save: sinon.stub()}
-                        }
-                    }
-                }
+            var myQueue = {
+                submit: function () {}
             };
-            var langBuilder = new LangBuilder(jobQueue, pdfUtility);
+            var langBuilder = new LangBuilder(myQueue, pdfUtility);
 
             var parentEntityKey = EntityKey.fromPath("/region/eu");
             var pdPath = "/tmp/pdfFile.pdf";
@@ -59,28 +53,16 @@ describe('LangBuilder.buildLang()', function () {
 
     describe('sends a splitJob to the message queue', function () {
         it('contains the path of the pdf', function() {
-            var saveSpy = sinon.spy();
-
-            var attemptsStub = sinon.stub();
-            attemptsStub
-                .withArgs(5)
-                .returns({save: saveSpy});
-
-            var createStub = sinon.stub();
             var expectedPayload = {originalFilepath: pdPath};
-            createStub
-                .withArgs('job-split-pdf', sinon.match(expectedPayload))
-                .returns({attempts: attemptsStub});
-
-            var jobQueue = {
-                create: createStub
+            var myQueue = {
+                submit: sinon.spy()
             };
 
-            var langBuilder = new LangBuilder(jobQueue, pdfUtility);
+            var langBuilder = new LangBuilder(myQueue, pdfUtility);
 
             langBuilder.buildLang(parentEntityKey, pdPath);
 
-            sinon.assert.calledOnce(saveSpy)
+            sinon.assert.calledWith(myQueue.submit, sinon.match(expectedPayload))
 
         })
     })
