@@ -128,7 +128,7 @@ describe('submit', function () {
         it('persist the data', function () {});
 
         it('be able to buffer tens of thousands of messages', function(done) {
-            this.timeout(4000);
+            this.timeout(3000)
             var queueName = "loadTest";
             var myQueue = MyQueue(redisConfig, jobConfig(queueName));
 
@@ -146,15 +146,16 @@ describe('submit', function () {
                 });
             }
 
-            var sentMessagesCount = 5000;
+            var sentMessagesCount = 1000;
             lodash.times(sentMessagesCount, submitJob);
             lodash.times(sentMessagesCount, receiveJob);
 
             //Then
             var intervalId = setInterval(function () {
-                if (receivedMessagesCount === sentMessagesCount)
+                if (receivedMessagesCount === sentMessagesCount) {
                     clearInterval(intervalId);
-                done();
+                    done();
+                }
             }, 100);
 
         });
