@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var kue = require('kue');
-
+var lodash = require('lodash');
 var MyQueue = require('../src/MyQueue');
 
 function failure(errorMessage) {
@@ -106,6 +106,37 @@ describe('submit', function () {
 
         });
 
+        it('be able to buffer tens of thousands of messages', function(done) {
+            this.timeout(4000);
+            var queueName = "loadTest";
+            var myQueue = MyQueue(redisConfig, jobConfig(queueName));
+
+            var jobData = {id: "jobId1"};
+
+            //When
+            function submitJob() {
+                myQueue.submit(jobData, queueName);
+            }
+
+            var receivedMessagesCount = 0;
+            function receiveJob() {
+                receiver.process(queueName, function (job) {
+                    receivedMessagesCount++;
+                });
+            }
+
+            var sentMessagesCount = 5000;
+            lodash.times(sentMessagesCount, submitJob);
+            lodash.times(sentMessagesCount, receiveJob);
+
+            //Then
+            var intervalId = setInterval(function () {
+                if (receivedMessagesCount === sentMessagesCount)
+                    clearInterval(intervalId);
+                    done();
+            }, 100);
+
+        });
 
         it('does not matter if the reciever is started before or after the submission', function (done) {
             var queueName = "receiverStartedAfter";
@@ -133,7 +164,7 @@ describe('submit', function () {
 
             return new Promise(function (resolve) {
                 var receivedJobs = [];
-                setInterval(receiveOneJob, 5);
+                var intervalId = setInterval(receiveOneJob, 5);
 
                 function receiveOneJob() {
                     receiver.process(queueName, doOneJob);
@@ -142,6 +173,7 @@ describe('submit', function () {
                 function doOneJob(job) {
                     receivedJobs.push(job.data);
                     if (receivedJobs.length === expectedJobNumber) {
+                        clearInterval(intervalId);
                         resolve(receivedJobs);
                     }
                 }
