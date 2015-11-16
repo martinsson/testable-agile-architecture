@@ -102,9 +102,30 @@ describe('submit', function () {
                 done(failure("the second receiver should not receive the job"))
             });
 
-            setTimeout(done, 100);
+            setTimeout(done, 50);
 
         });
+
+        it('does not matter if the reciever is started before or after the submission', function (done) {
+            var queueName = "receiverStartedAfter";
+            var myQueue = MyQueue(redisConfig, jobConfig(queueName));
+
+            var jobData = {id: "jobId1"};
+
+            //When
+            myQueue.submit(jobData, queueName);
+
+            var receiverStartedAfter = kue.createQueue(redisConfig);
+
+            //Then
+            receiverStartedAfter.process(queueName, function (job) {
+                expect(job.data).to.deep.equal(jobData);
+                done();
+            });
+
+        });
+
+        it('persist the data', function () {});
 
         it('be able to buffer tens of thousands of messages', function(done) {
             this.timeout(4000);
@@ -133,31 +154,10 @@ describe('submit', function () {
             var intervalId = setInterval(function () {
                 if (receivedMessagesCount === sentMessagesCount)
                     clearInterval(intervalId);
-                    done();
+                done();
             }, 100);
 
         });
-
-        it('does not matter if the reciever is started before or after the submission', function (done) {
-            var queueName = "receiverStartedAfter";
-            var myQueue = MyQueue(redisConfig, jobConfig(queueName));
-
-            var jobData = {id: "jobId1"};
-
-            //When
-            myQueue.submit(jobData, queueName);
-
-            var receiverStartedAfter = kue.createQueue(redisConfig);
-
-            //Then
-            receiverStartedAfter.process(queueName, function (job) {
-                expect(job.data).to.deep.equal(jobData);
-                done();
-            });
-
-        });
-
-        it('persist the data', function () {});
 
 
         function waitForJobsToBeProcessed(expectedJobNumber, queueName) {
