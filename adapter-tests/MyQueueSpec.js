@@ -20,7 +20,7 @@ describe('submit', function () {
         var redisConfig = redisConf();
         var receiver = kue.createQueue(redisConfig);
 
-        it('saves the payload to queue, the receiver gets the exact same data', function (done) {
+        it('save the payload to queue, transmit the exact same data to the receiver', function (done) {
             var queueName = "test1";
             var myQueue = MyQueue(redisConfig, jobConfig(queueName));
 
@@ -57,7 +57,7 @@ describe('submit', function () {
 
         });
 
-        it('it is fifo', function (done) {
+        it('be fifo', function (done) {
             var queueName = "fifo";
             var myQueue = MyQueue(redisConfig, jobConfig(queueName));
 
@@ -70,6 +70,7 @@ describe('submit', function () {
             myQueue.submit(firstJobData);
             myQueue.submit(secondJobData);
 
+            //Then
             var expectedJobNumber = submittedJobs.length;
             waitForJobsToBeProcessed(expectedJobNumber, queueName)
                 .then(assertJobsCameInOrder)
@@ -79,9 +80,32 @@ describe('submit', function () {
                 expect(receivedJobs).to.deep.equal(submittedJobs);
             }
 
+        });
+
+        it('be consume-once', function(done) {
+
+            var queueName = "consume-once";
+            var myQueue = MyQueue(redisConfig, jobConfig(queueName));
+            var receiver1 = kue.createQueue(redisConfig);
+            var receiver2 = kue.createQueue(redisConfig);
+
+
+            //When
+            var jobData = {};
+            myQueue.submit(jobData);
+
             //Then
+            receiver1.process(queueName, function (job) {
+            });
+
+            receiver2.process(queueName, function (job) {
+                done(failure("the second receiver should not receive the job"))
+            });
+
+            setTimeout(done, 100);
 
         });
+
 
         it('does not matter if the reciever is started before or after the submission', function (done) {
             var queueName = "receiverStartedAfter";
@@ -101,6 +125,8 @@ describe('submit', function () {
             });
 
         });
+
+        it('persist the data', function () {});
 
 
         function waitForJobsToBeProcessed(expectedJobNumber, queueName) {
@@ -146,6 +172,7 @@ describe('submit', function () {
             })
 
         });
+
 
     });
 
