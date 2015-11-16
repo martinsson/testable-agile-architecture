@@ -14,6 +14,7 @@ function jobConfig(queueName) {
 }
 
 describe('submit', function () {
+
     describe('normally should', function () {
 
         var redisConfig = redisConf();
@@ -82,7 +83,22 @@ describe('submit', function () {
 
         });
 
-        it('does not matter if the reciever is started before or after the submitter', function () {
+        it('does not matter if the reciever is started before or after the submission', function (done) {
+            var queueName = "receiverStartedAfter";
+            var myQueue = MyQueue(redisConfig, jobConfig(queueName));
+
+            var jobData = {id: "jobId1"};
+
+            //When
+            myQueue.submit(jobData, queueName);
+
+            var receiverStartedAfter = kue.createQueue(redisConfig);
+
+            //Then
+            receiverStartedAfter.process(queueName, function (job) {
+                expect(job.data).to.deep.equal(jobData);
+                done();
+            });
 
         });
 
