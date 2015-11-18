@@ -1,0 +1,92 @@
+<div ng-controller="$controller$" class="featureScreen recomposerContainer avoid-bouncing-default">
+    <div class="featureHeader row">
+        <div class="col  middleAlign featureHeaderSelection">
+            <div class="h2-like txtBold inline textHeader middle pointer">
+                MyDoc
+                <!--<span class="Breadcrumb selected"></span>-->
+            </div>
+        </div>
+        <div class="featureHeaderSection col leftColumn" bee-click="destroy()">
+            <span class="backButton"><span style="">{{strings.getString('backToBeevirtua')}}</span></span>
+        </div>
+        <div class="featureHeaderSection col rightColumn ">
+            <div class="featureHeaderSection skewed outer ">
+                <div class="featureHeaderSection inner">
+                    <span class="featureHeaderRightLabel hidden"><span>{{strings.getString('yourSummary')}}</span></span>
+                </div>
+            </div>
+        </div><!--featureHeaderSection-->
+
+    </div>
+    <!--featureHeader-->
+
+
+    <div class="featureBody">
+
+        <div class=" recomposerContent">
+
+            <div class="featureHelp" ng-class="{ 'open' : openHelp }">
+
+                <div class="containerMax">
+                        <span class="icon-help"></span>
+                    <div class="text hiddenMobile">{{strings.getString('myDocHelpMessage')}}</div>
+                    <div class="text hiddenDesktop">{{strings.getString('myDocHelpMessageMobile')}}</div>
+                    <span class="icon-close" bee-click="openHelp = !openHelp"></span>
+                </div>
+
+            </div>
+
+
+            <div class="listItem no-margin-left bee-grid">
+                <div class="recomposer-g-first"></div>
+                <div class="recomposer-g-1 relative" bee-click="checkAll()">
+                    <span class="icon-radio-unchecked " ng-class="{'icon-checked' : checkAllClicked}"></span>
+                </div>
+                <div class="recomposer-g-2"><span class="recomposerTitle">{{strings.getString('picture')}}</span></div>
+                <div class="recomposer-g-4"><span class="recomposerTitle">{{strings.getString('title')}}</span></div>
+                <div class="recomposer-g-1"><span class="recomposerTitle"></span></div>
+
+            </div>
+            <div ng-repeat="section in sections" class="listItem no-margin-left bee-grid" >
+                <div class="recomposer-g-first"></div>
+                <div class="recomposer-g-1">
+                    <span class="border-line"></span>
+                    <input id=recomposerInput{{$index}} type="checkbox" ng-model="section.included" ng-hide="section.required"  ng-change="updateNbPages()" ng-checked="section.included">
+                    <label for=recomposerInput{{$index}} class="icon-radio-unchecked " ng-if="!section.required" ></label>
+                    <span class="icon-lock" ng-if="section.required"></span>
+                </div>
+                <div class="recomposer-g-2">
+                    <label  for=recomposerInput{{$index}}>
+                        <div class="imageNumberContainer" ng-class="{'checked' : section.required || section.included}">
+                            <img ng-if="section.thumbUrl" ng-src="{{section.thumbUrl}}" >
+                            <span class="pageNumbers">{{section.nbPages}} {{strings.getString('p')}}</span>
+                        </div>
+                    </label>
+                </div>
+                <div class="recomposer-g-4">
+                    <div class="recomposerText">{{section.label}}</div>
+                </div>
+                <div class="recomposer-g-1">
+                    <!--<span class="collapse icon-collapse" ng-show=""></span>-->
+                    <!--{{strings.getString('close')}}-->
+                </div>
+
+            </div>
+
+        </div>
+        <!--recomposerContent-->
+        <div class="sommaire">
+            <div>sommaire</div>
+        </div>
+        <!--sommaire-->
+    </div>
+    <!--featureBody-->
+    <div class="recomposerFooter featureFooter" ng-class="{ 'errorMessage':nbPages==0}">
+        <div class="containerMax">
+            <span class="pageSelectionNumber">{{nbPages}} <span ng-if="nbPages>1">{{strings.getString('pages')}}</span><span ng-if="nbPages<=1">{{strings.getString('page')}}</span></span>
+        <input class="button" ng-click="selectSections()" value="{{strings.getString('create')}}" ng-disabled="nbPages==0">
+        </div>
+    </div>
+    <!--recomposerFooter-->
+
+</div><!--featureScreen-->

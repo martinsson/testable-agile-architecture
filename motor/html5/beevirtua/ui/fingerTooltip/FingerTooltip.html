@@ -1,0 +1,10 @@
+<div ng-controller="$controller$" class="fingerTooltipContainer coverAlert" bee-click="closeFingerTooltip()">
+
+    <div class="fingerTooltip" id="alertContent" ng-class="{'destroEffect' : destroyed}">
+        <div class="triangle-up"></div>
+        <!--<div class="icon-warning2"><span>i</span></div>-->
+        <div class="icon-warning1"></div>
+        <div class="fingerTooltipMessage" ng-bind-html="message"></div>
+        <input type="submit" class="buttonAlert button" ng-click="closeFingerTooltip()" value="{{closeButtonText}}" />
+    </div>
+</div>

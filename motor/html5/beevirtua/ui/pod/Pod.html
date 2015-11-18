@@ -1,0 +1,387 @@
+<div ng-controller="$controller$" class="featureScreen podContainer avoid-bouncing-default" id="pod"
+     ng-class="{podOpen: isOpen, podClose:!isOpen}">
+
+
+    <script type="text/ng-template" id="error-messages">
+        <div ng-message="required">{{strings.getString('compulsoryFields')}}</div>
+        <div ng-message="email">{{strings.getString('incorrectEmail')}}</div>
+        <div ng-message="pattern">{{strings.getString('incorrectFormat')}}</div>
+    </script>
+    <div class="featureHeader row">
+        <div class="col  middleAlign featureHeaderSelection">
+            <!--<div class="big txtNormal inline textHeader pointer hiddenMobile hidden">{{strings.getString('selection')}}-->
+                <!--<span class="Breadcrumb "></span>-->
+            <!--</div>-->
+            <div class="h2-like txtBold theColor inline textHeader middle pointer">{{strings.getString('delivery')}}
+                <!--<span class="Breadcrumb selected"></span>-->
+            </div>
+            <!--<div class="big txtNormal inline textHeader pointer hiddenMobile hidden">{{strings.getString('validation')}}-->
+                <!--<span class="Breadcrumb "></span>-->
+            <!--</div>-->
+
+        </div>
+        <div class="featureHeaderSection col leftColumn" bee-fast-click="closePod()">
+            <span class="backButton"><span style="">RETOUR EN ARRIERE</span></span>
+        </div>
+        <div class="featureHeaderSection col rightColumn pod">
+            <div class="featureHeaderSection skewed outer">
+                <div class="featureHeaderSection inner">
+
+                </div>
+            </div>
+            <span class="impressionLabel"></span>
+        </div>
+    </div>
+    <form name="podForm" class="podForm avoid-prevent-default" role="form" ng-submit="processForm(delivery)" novalidate="novalidate">
+
+        <div class="grid-2 form no-margin">
+            <div class="grid-50 no-margin podLeftColumn">
+                <!--<div class="col"></div>-->
+                <div class="titleContainer">
+                    <h2 class="h2-like">{{strings.getString('deliveryAddress')}}</h2>
+                </div>
+                <div class="label">
+                    <label class="noDecoration">{{strings.getString('civility')}}</label>
+                </div>
+                <div class="field">
+
+                    <div class="civil">
+                        <input name="title" type="radio" ng-model="delivery.title" id="1-mrs"
+                               value="{{strings.getString('mrs')}}"
+                               ng-change="copyValue('title','userTitle')" checked="checked"/><label for="1-mrs">{{strings.getString('mrs')}}</label>
+                    </div>
+                    <div class="civil">
+                        <input name="title" type="radio" ng-model="delivery.title" id="1-mr"
+                               value="{{strings.getString('mr')}}"
+                               ng-change="copyValue('title','userTitle')"/><label
+                            for="1-mr">{{strings.getString('mr')}}</label>
+                    </div>
+                </div>
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:submitted && podForm.lastName.$error.required}">
+                    <label>{{strings.getString('lastName')}}&nbsp;*</label>
+                </div>
+                <div class="field " ng-class="{error:submitted && podForm.lastName.$error.required}">
+                    <div class="scrollLandmark"></div>
+                    <input class="textInput" name="lastName" type="text" required
+                           ng-model="delivery.lastName"
+                           ng-change="copyValue('lastName','userLastName')" bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.lastName.length > 0"
+                          bee-click="clearValues('lastName','userLastName');crossFocusText($event) "></span>
+
+                    <div class="errorMessage" ng-messages="podForm.lastName.$error" role="alert"
+                         ng-show="submitted && podForm.lastName.$error.required">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:submitted && podForm.firstName.$error.required}">
+                    <label>{{strings.getString('firstName')}}&nbsp;* </label>
+                </div>
+                <div class="field" ng-class="{error:submitted && podForm.firstName.$error.required}">
+                    <div class="scrollLandmark"></div>
+                    <input class="textInput" name="firstName" type="text" required
+                           ng-model="delivery.firstName"
+                           ng-change="copyValue('firstName','userFirstName')" bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.firstName.length > 0"
+                          bee-click="clearValues('firstName','userFirstName');crossFocusText($event) "></span>
+
+                    <div class="errorMessage" ng-messages="podForm.firstName.$error" role="alert"
+                         ng-show="submitted && podForm.firstName.$error.required">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:(submitted && podForm.mail.$error.required) || podForm.mail.$error.email}">
+                    <label>{{strings.getString('email')}}&nbsp;*</label>
+                </div>
+                <div class="field"
+                     ng-class="{error:(submitted && podForm.mail.$error.required) || podForm.mail.$error.email}">
+                    <div class="scrollLandmark"></div>
+                    <input class="textInput" name="mail" type="email" required ng-model="delivery.mail"
+                           ng-change="copyValue('mail','userMail')" bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.mail.length > 0"
+                          bee-click="clearValues('mail','userMail');crossFocusText($event) "></span>
+
+                    <div class="errorMessage" ng-messages="podForm.mail.$error" role="alert"
+                         ng-show="(submitted && podForm.mail.$error.required) || podForm.mail.$error.email">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)">
+                    <label>{{strings.getString('company')}}</label>
+                </div>
+                <div class="field">
+                    <input class="textInput" name="company" type="text" ng-model="delivery.company"
+                           bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.company.length > 0"
+                          bee-click="delivery.company = '';crossFocusText($event) "></span>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:submitted && podForm.address1.$error.required}">
+                    <label>{{strings.getString('address1')}}&nbsp;*</label>
+                </div>
+                <div class="field" ng-class="{error:submitted && podForm.address1.$error.required}">
+                    <div class="scrollLandmark"></div>
+                    <input class="textInput" name="address1" type="text" required ng-model="delivery.address1"
+                           placeholder="{{strings.getString('placeholderAddress')}}" bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.address1.length > 0"
+                          bee-click="delivery.address1 = '';crossFocusText($event) "></span>
+                    <div class="errorMessage" ng-messages="podForm.address1.$error" role="alert"
+                         ng-show="submitted && podForm.address1.$error.required">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)">
+                    <label>{{strings.getString('address2')}}</label>
+                </div>
+                <div class="field">
+                    <input class="textInput" name="address2" type="text" ng-model="delivery.address2"
+                           placeholder="{{strings.getString('placeholderAddress2')}}" bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.address2.length > 0"
+                          bee-click="delivery.address2 = '';crossFocusText($event)"></span>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:submitted && podForm.city.$error.required}">
+                    <label>{{strings.getString('city')}}&nbsp;*</label>
+                </div>
+                <div class="field" ng-class="{error:submitted && podForm.city.$error.required}">
+                    <div class="scrollLandmark"></div>
+                    <input class="textInput" name="city" type="text" required ng-model="delivery.city"
+                           bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.city.length > 0"
+                          bee-click="delivery.city = '';crossFocusText($event)"></span>
+
+                    <div class="errorMessage" ng-messages="podForm.city.$error" role="alert"
+                         ng-show="submitted && podForm.city.$error.required">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:(submitted && podForm.postalCode.$error.required) || podForm.postalCode.$error.pattern}">
+                    <label>{{strings.getString('postalCodeOrZip')}}&nbsp;*</label>
+                </div>
+                <div class="field"
+                     ng-class="{error:(submitted && podForm.postalCode.$error.required) || podForm.postalCode.$error.pattern}">
+                    <div class="scrollLandmark"></div>
+                    <input class="textInput" name="postalCode" type="text" pattern="[a-zA-Z0-9\s-]*" required
+                           ng-model="delivery.postalCode" bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.postalCode.length > 0"
+                          bee-click="delivery.postalCode = '';crossFocusText($event)"></span>
+
+                    <div class="errorMessage" ng-messages="podForm.postalCode.$error" role="alert"
+                         ng-show="(submitted && podForm.postalCode.$error.required) || podForm.postalCode.$error.pattern">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)">
+                    <label>{{strings.getString('stateOrRegion')}}</label>
+                </div>
+                <div class="field">
+                    <input class="textInput" name="region" type="text" ng-model="delivery.region"
+                           bee-click="onTextClick($event)"/>
+                    <span class="search-delete" style="display: inline;" ng-if="delivery.region.length > 0"
+                          bee-click="delivery.region = '';crossFocusText($event)"></span>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:submitted && podForm.country.$error.required}">
+                    <label>{{strings.getString('country')}}&nbsp;*</label>
+                </div>
+                <div class="field avoid-prevent-default" ng-class="{error:submitted && podForm.country.$error.required}">
+                    <select name='country' class='country' ng-model="delivery.country" required
+                            ng-change="countryChanged()">
+                        <option ng-repeat="country in countries" value="{{country.name}}"
+                                ng-selected="country.name === delivery.country">{{country.name}}
+                        </option>
+                    </select>
+
+                    <div class="errorMessage" ng-messages="podForm.country.$error" role="alert"
+                         ng-show="submitted && podForm.country.$error.required">
+                        <div ng-messages-include="error-messages"></div>
+                    </div>
+                </div>
+
+
+                <div class="label" bee-click="labelClicked($event)"
+                     ng-class="{error:(submitted && ( podForm.phoneNumber.$error.required || podForm.phoneCode.$error.required )) || podForm.phoneNumber.$error.pattern}">
+                    <label>{{strings.getString('phone')}}&nbsp;*</label>
+                </div>
+                <div class="field"
+                     ng-class="{error:(submitted && ( podForm.phoneNumber.$error.required || podForm.phoneCode.$error.required )) || podForm.phoneNumber.$error.pattern}">
+                    <div class="grid-2-3">
+                        <div class="scrollLandmark"></div>
+                        <select name='phoneCode' class='phoneCode avoid-prevent-default' ng-model="delivery.phoneCode" required
+                                ng-change="phoneCodeChanged()">
+                            <option ng-repeat="country in countries" value="{{country.dialCode}}"
+                                    ng-selected="country.dialCode === delivery.phoneCode">{{country.name}}
+                                {{country.dialCode}}
+                            </option>
+                        </select>
+
+                        <input name="phoneNumber" class="textInput phoneNumber marginHackedTel" required type="tel"
+                               ng-model="delivery.phoneNumber"
+                               pattern="[0-9\*#;\,\-]*" bee-click="onTextClick($event)"/>
+                        <span class="search-delete" style="display: inline;" ng-if=" delivery.phoneNumber.length > 0"
+                              bee-click="delivery.phoneNumber = '';crossFocusText($event)"></span>
+
+                        <div class="errorMessage pushed marginHackedTel"
+                             ng-messages="{required: podForm.phoneNumber.$error.required || podForm.phoneCode.$error.required, pattern: podForm.phoneNumber.$error.pattern}"
+                             role="alert"
+                             ng-show="(submitted && ( podForm.phoneNumber.$error.required || podForm.phoneCode.$error.required )) || podForm.phoneNumber.$error.pattern">
+                            <div ng-messages-include="error-messages" class=" "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--DEUXIEME PARTIE-->
+            <div class="grid-50 no-margin podRightColumn">
+
+
+                <div class="titleContainer">
+                    <h2 class="h2-like hiddenUntilMobile">{{strings.getString('yourInformations')}}</h2>
+                    <h2 class="h2-like hiddenFromMobile">
+                        <input id="urInfo" type="checkbox" ng-model="infosChecked">
+                        <label for="urInfo" class="icon-radio-unchecked " >
+                            <span>
+                            {{strings.getString('yourInformationsIsNotIdentical')}}
+                            </span>
+                        </label>
+                    </h2>
+                </div>
+
+
+
+                    <div class="w100 grid-2 urInfos" ng-class="{ 'infoShow' : infosChecked }">
+                        <div class="label">
+                            <label class="noDecoration">Civilité</label>
+                        </div>
+
+                        <div class="field">
+                            <div class="civil">
+                                <input name="userTitle" type="radio" ng-model="delivery.userTitle" id="2-mrs"
+                                       value="{{strings.getString('mrs')}}"
+                                       ng-change="markDirty('userTitle')"/><label
+                                    for="2-mrs">{{strings.getString('mrs')}}</label>
+                            </div>
+
+                            <div class="civil">
+                                <input name="userTitle" type="radio" ng-model="delivery.userTitle" id="2-mr"
+                                       value="{{strings.getString('mr')}}"
+                                       ng-change="markDirty('userTitle')"/><label
+                                    for="2-mr">{{strings.getString('mr')}}</label>
+                            </div>
+                        </div>
+
+
+                        <div class="label" bee-click="labelClicked($event)"
+                             ng-class="{error:submitted && podForm.userLastName.$error.required}">
+                            <label>{{strings.getString('lastName')}}&nbsp;*</label>
+                        </div>
+                        <div class="field" ng-class="{error:submitted && podForm.userLastName.$error.required}">
+                            <div class="scrollLandmark"></div>
+                            <input class="textInput" name="userLastName" type="text" required
+                                   ng-model="delivery.userLastName"
+                                   ng-change="markDirty('userLastName')" bee-click="onTextClick($event)"/>
+                            <span class="search-delete" style="display: inline;" ng-if="delivery.userLastName.length > 0"
+                                  bee-click="clearValues('userLastName');crossFocusText($event)"></span>
+
+                            <div class="errorMessage" ng-messages="podForm.userLastName.$error" role="alert"
+                                 ng-show="submitted && podForm.userLastName.$error.required">
+                                <div ng-messages-include="error-messages"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="label" bee-click="labelClicked($event)"
+                             ng-class="{error:submitted && podForm.userFirstName.$error.required}">
+                            <label>{{strings.getString('firstName')}}&nbsp;* </label>
+                        </div>
+                        <div class="field" ng-class="{error:submitted && podForm.userFirstName.$error.required}">
+                            <div class="scrollLandmark"></div>
+                            <input class="textInput" name="userFirstName" type="text" required
+                                   ng-model="delivery.userFirstName"
+                                   ng-change="markDirty('userFirstName')" bee-click="onTextClick($event)"/>
+                            <span class="search-delete" style="display: inline;" ng-if="delivery.userFirstName.length > 0"
+                                  bee-click="clearValues('userFirstName');crossFocusText($event)"></span>
+
+                            <div class="errorMessage" ng-messages="podForm.userFirstName.$error" role="alert"
+                                 ng-show="submitted && podForm.userFirstName.$error.required">
+                                <div ng-messages-include="error-messages"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="label" bee-click="labelClicked($event)"
+                             ng-class="{error:(submitted && podForm.userMail.$error.required) || podForm.userMail.$error.email}">
+                            <label>{{strings.getString('email')}}&nbsp;*</label>
+                        </div>
+                        <div class="field" ng-class="{error:submitted && podForm.userMail.$error.required}">
+                            <div class="scrollLandmark"></div>
+                            <input class="textInput" name="userMail" type="email" required ng-model="delivery.userMail"
+                                   ng-change="markDirty('userMail')" bee-click="onTextClick($event)"/>
+                            <span class="search-delete" style="display: inline;" ng-if="delivery.userMail.length > 0"
+                                  bee-click="clearValues('userMail');crossFocusText($event)"></span>
+
+                            <div class="errorMessage" ng-messages="podForm.userMail.$error" role="alert"
+                                 ng-show="(submitted && podForm.userMail.$error.required) || podForm.userMail.$error.email">
+                                <div ng-messages-include="error-messages"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="field no-margin-self w100">
+
+                            <div class="checkBox">
+                                <p class="small  ">{{strings.getString('confirmationEmailSent')}}</p>
+                                <!--<input type="checkbox" id="saveSenderInfo" name="saveSenderInfo" ng-model="delivery.saveSenderInfo"-->
+                            <!--ng-show="saveSenderInfoEnabled()">-->
+                            <!--<label for="saveSenderInfo" ng-show="saveSenderInfoEnabled()">Conserver mes-->
+                            <!--informations</label>-->
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="field alignBottom aligneRight">
+                    <input type="submit" class="button" value="{{strings.getString('submit')}}" ng-click=""
+                           ng-disabled="processingPod"/>
+
+                    <p class="smaller mandatoryFields">* {{strings.getString('compulsoryFields')}}</p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </form>
+
+
+    <!--<pre>user = {{delivery | json}}</pre>-->
+    <!--<pre>podForm.mail.$error = {{ podForm.mail.$error | json }}</pre>-->
+
+    <!--<code>podForm.input.$valid = {{podForm.input.$valid}}</code><br>-->
+    <!--<code>podForm.input.$error = {{podForm.input.$error}}</code><br>-->
+    <!--<code>podForm.$valid = {{podForm.$valid}}</code><br>-->
+    <!--<code>podForm.$error.required = {{!!podForm.$error.required}}</code><br>-->
+
+</div>

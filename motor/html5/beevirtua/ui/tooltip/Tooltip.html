@@ -1,0 +1,3 @@
+<div ng-controller="$controller$" id="tooltip" style="z-index: 10000;" ng-class="{'show':visible}">
+    <span ng-if="isWindows">CTRL</span><span ng-if="!isWindows">&#8984</span> {{toolTipMessageClick}}<br>{{toolTipMessage}}
+</div>

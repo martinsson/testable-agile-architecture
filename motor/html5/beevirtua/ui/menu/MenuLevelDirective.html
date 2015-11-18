@@ -1,0 +1,25 @@
+<div bee-scrollable="level == 1" class="menu-level" ng-class="{
+    'menu-level--open' : open,
+    'menu-level--root' : level == 1,
+    'menu-level--level1' : level === 1,
+    'menu-level--level2' : level === 2,
+    'menu-level--level3' : level === 3
+}" ng-style="{'z-index' : open?(level+10000):(level===1?1:-1)}">
+    <h2 bee-click="closeMenu($event)"><span ng-class="menuItem.classes"></span> {{menuItem.label}}</h2>
+    <ul>
+        <li ng-repeat="child in menuItem.children | menuItemFilter">
+            <a ng-class="getMenuElementClasses(child)"
+               ng-target="child.action.target"
+               bee-ripple
+               bee-click="getMenuElementAction(child, $event)">
+                <div ng-if="child.bulletTxt" class="icon-bullet">{{child.bulletTxt}}</div>
+                {{child.label}}
+            </a>
+
+            <div ng-if="child.children" bee-menu menu-item="child" level="level+1"></div>
+        </li>
+    </ul>
+    <div ng-if="level == 1" ng-style="{ opacity: 0.5*(nbClicks>4)}" id="menu-level__build-version" bee-click="incrementClicks(child, $event)">{{versionNumber}}</div>
+</div>
+
+

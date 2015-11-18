@@ -1,0 +1,14 @@
+<div ng-controller="$controller$" class="headerContainer" style="z-index:2;position: absolute;width: 100%;">
+    <div id="header" class="header" bee-ripple>
+        <div class="left-header">
+            <!--<span class="book-title">{{confBook.title}}</span>-->
+            <a href="http://www.modelab.fr" target="_blank"><span ng-if="!themePath">Menu</span><img
+                    ng-if="themePath" ng-src="{{themePath}}img/header-logo.png" alt="Header" class="logo"/></a>
+        </div>
+        <div class="right-header">
+            <div ng-if="hasSections" class="recomposerBtn btn-header" bee-fast-click="recomposerIsActive ? resetSections() : openRecomposer()" ng-class="{ active: recomposerIsActive }"></div>
+            <div ng-if="podIsActive" class="podBtn btn-header" bee-fast-click="recomposerIsActive ? showNoPodTooltip() : openPod()" ng-class="{ disabled: recomposerIsActive }"></div>
+        </div>
+    </div>
+    <div class="menu-button" bee-click="openMenu()" bee-ripple><img ng-if="themePath" ng-src="{{themePath}}img/header-menu-icon.png"></div>
+</div>

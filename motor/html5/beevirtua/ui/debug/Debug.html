@@ -1,0 +1,54 @@
+<div ng-controller="$controller$" id="benchmarkContainer">
+    <div id="benchmark">
+        <ul>
+            <li>Device : {{systemInfo.device}}</li>
+            <li>OS : {{systemInfo.os}}</li>
+            <li>Language : {{systemInfo.language}}</li>
+            <li>Browser : {{systemInfo.browser}} V{{systemInfo.browserVersion}}</li>
+            <li>Cookies enabled : {{systemInfo.cookiesEnabled}}</li>
+            <li>Screen info :
+                <ul>
+                    <li>Orientation : {{screenInfo().portrait ? "Portrait" : "Landscape"}}</li>
+                    <li>Available screen size : {{screenInfo().availableWidth }}X{{screenInfo().availableHeight }}</li>
+                    <li>Inner window size : {{screenInfo().windowInnerWidth }}X{{screenInfo().windowInnerHeight }}</li>
+                    <li>Outer window size : {{screenInfo().windowOuterWidth }}X{{screenInfo().windowOuterWidth }}</li>
+                    <li>Colour depth : {{systemInfo.colorDepth}}</li>
+                    <li>Pixel depth : {{systemInfo.pixelDepth}}</li>
+                </ul>
+            </li>
+            <li>Performance :
+                <ul>
+                    <li>Framerate : {{fps}} FPS</li>
+                    <li>Network speed : {{currentNetworkSpeed}}</li>
+                    <li>Timing :
+                        <ul>
+                            <li ng-if="timing!=undefined">Dom loading time : {{timing.domComplete-timing.domLoading}}
+                                ms
+                            </li>
+                            <li ng-if="timing!=undefined">Dom construction time : {{timing.domContentLoadedEventEnd -
+                                timing.domContentLoadedEventStart}} ms
+                            </li>
+                            <li ng-if="timing!=undefined">DNS lookup time : {{timing.domainLookupEnd -
+                                timing.domainLookupStart}} ms
+                            </li>
+                            <li ng-if="timing!=undefined">Total time : {{timing.loadEventEnd - timing.navigationStart}}
+                                ms
+                            </li>
+                        </ul>
+                    </li>
+                    <li ng-if="memory!=undefined && memory.jsHeapSizeLimit>0">Memory heap limit :
+                        {{memory.jsHeapSizeLimit/1000000}} Mb
+                    </li>
+                    <li ng-if="memory!=undefined && memory.totalJSHeapSize>0">Allocated memory heap size :
+                        {{memory.totalJSHeapSize/1000000}} Mb
+                    </li>
+                    <li ng-if="memory!=undefined && memory.usedJSHeapSize>0">Used memory :
+                        {{memory.usedJSHeapSize/1000000}} Mb
+                    </li>
+                    <li ng-if="hardwareConcurrency!==undefined">Logical CPUs : {{hardwareConcurrency}}</li>
+                </ul>
+            </li>
+        </ul>
+        <button bee-click="close()">Fermer</button>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <id>d9682fb0-8de1-11e5-90db-0f812aebd94d</id>
+  <title>Une Architecture agile et testable</title>
+  <status/>
+  <children>
+    <version>
+      <item>Version1</item>
+    </version>
+    <motor>
+      <item>html5</item>
+    </motor>
+  </children>
+</root>

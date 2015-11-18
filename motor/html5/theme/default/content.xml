@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <thumb>data/thumb.png</thumb>
+  <favicon>
+    <item>
+      <rel>shortcut icon</rel>
+      <href>bee/img/favicon/favicon.ico</href>
+    </item>
+    <item>
+      <rel>shortcut icon</rel>
+      <href>data/img/favicon/favicon.ico</href>
+    </item>
+  </favicon>
+  <css>
+    <item>bee/style/skin.css</item>
+    <item>data/style/skin.css</item>
+  </css>
+  <basePath>data/</basePath>
+  <id>default</id>
+</root>

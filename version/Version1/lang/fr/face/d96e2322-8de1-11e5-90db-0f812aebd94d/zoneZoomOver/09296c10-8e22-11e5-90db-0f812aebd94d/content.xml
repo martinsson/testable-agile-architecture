@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <id>09296c10-8e22-11e5-90db-0f812aebd94d</id>
+  <x>393</x>
+  <y>135</y>
+  <width>235</width>
+  <height>149</height>
+  <path>
+    <item>
+      <item>0</item>
+      <item>0</item>
+    </item>
+    <item>
+      <item>235</item>
+      <item>0</item>
+    </item>
+    <item>
+      <item>235</item>
+      <item>149</item>
+    </item>
+    <item>
+      <item>0</item>
+      <item>149</item>
+    </item>
+  </path>
+  <backgroundColor/>
+</root>

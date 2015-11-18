@@ -1,0 +1,88 @@
+<div ng-controller="$controller$" class="featureScreen universContainer avoid-bouncing-default">
+    <div class="featureHeader row">
+        <div class="col  middleAlign featureHeaderSelection">
+            <div class="h2-like txtBold inline textHeader middle pointer">
+                MyCatalog
+                <!--<span class="Breadcrumb selected"></span>-->
+            </div>
+        </div>
+        <div class="featureHeaderSection col leftColumn" bee-click="destroy()">
+            <span class="backButton"><span style="">{{strings.getString('backToBeevirtua')}}</span></span>
+        </div>
+        <div class="featureHeaderSection col rightColumn ">
+            <div class="featureHeaderSection skewed outer ">
+                <div class="featureHeaderSection inner">
+                    <span class="featureHeaderRightLabel hidden"><span>{{strings.getString('yourSummary')}}</span></span>
+                </div>
+            </div>
+        </div><!--featureHeaderSection-->
+
+    </div>
+    <!--featureHeader-->
+
+
+    <div class="featureBody">
+        <div class="content">
+            <div class="featureHelp" ng-class="{ 'open' : openHelp }">
+
+                <div class="containerMax">
+                    <span class="icon-help"></span>
+                    <div class="text">{{strings.getString('myCatalogHelpMessage')}}</div>
+                    <span class="icon-close" bee-click="openHelp = !openHelp"></span>
+                </div>
+
+            </div>
+
+            <div class="universBodyContent featureBodyContent ">
+                <div class="grid-4-tiny-1 no-margin">
+
+                    <label ng-repeat="univers in universes" class="univers" ng-class="{'checked' : univers.selected}">
+                        <div>
+                            <div class="univers-visuel" ng-class="{'checked' : univers.selected}">
+                                <input class="selectUnivers" id="universInput{{$index}}" type="checkbox" ng-model="univers.selected" ng-change="updatenbUnivers()">
+                                <label for=universInput{{$index}} class="icon-radio-unchecked " ></label>
+                                <label class="imageUnivers" for="universInput{{$index}}">
+                                    <img src="{{univers.icon}}">
+                                </label>
+                            </div>
+                            <label class="textUnivers" for="universInput{{$index}}">{{univers.label}}</label>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="saveQuestionContent hiddenDesktop">
+                    <input id="saveUniverse" type="checkbox" ng-model="saveUniverse" ng-checked="true">
+                    <label class="saveSelection icon-radio-unchecked" for="saveUniverse">
+                    </label>
+                    <label for="saveUniverse" style="display: inline;">
+                        <span class="text">{{strings.getString('saveOrder')}}</span>
+                    </label>
+                </div>
+
+            </div><!--universBodyContent-->
+
+        </div>
+    </div>
+
+    <div class="universFooter featureFooter" ng-class="{ 'errorMessage':nbUnivers==0}">
+        <div class="containerMax">
+
+            <div class="center w50 saveQuestionContent hiddenMobile " >
+                <input id="saveUniverseDesktop" type="checkbox" ng-model="saveUniverse" ng-checked="true">
+                <label class="saveSelection icon-radio-unchecked" for="saveUniverseDesktop">
+                </label>
+                <label for="saveUniverseDesktop" style="display: inline;">
+                    <span class="text">{{strings.getString('saveOrder')}}</span>
+                </label>
+            </div>
+            <div class="pageSelectionNumber">{{nbUnivers}}
+                <span ng-if="nbUnivers>1">{{strings.getString('selectedUniverses')}}</span>
+                <span ng-if="nbUnivers<=1">{{strings.getString('selectedUniverse')}}</span>
+            </div>
+            <input class="button" ng-click="setUniverse()" value="{{strings.getString('submit')}}" ng-disabled="nbUnivers==0">
+            <div></div>
+
+
+        </div>
+    </div>
+</div>

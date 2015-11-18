@@ -1,0 +1,10 @@
+<div id="pageNumber" ng-controller="$controller$">
+    <span ng-if="representationMode=='biplan'">
+        <span ng-if="currentPageIndex > 0">{{currentPageIndex}}</span>
+        <span ng-if="currentPageIndex > 0 && currentPageIndex < nbFaces"> - </span>
+        <span ng-if="currentPageIndex < nbFaces">{{currentPageIndex+1}}</span> / {{nbFaces}}
+    </span>
+    <span ng-if="representationMode=='monoplan'">
+        {{(currentPageIndex/2)+1}} / {{nbFaces/2}}
+    </span>
+</div>

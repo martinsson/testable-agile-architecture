@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <id>html5</id>
+  <selectedTheme>default</selectedTheme>
+  <engineUrl>motor/html5</engineUrl>
+  <children>
+    <theme>
+      <item>default</item>
+    </theme>
+  </children>
+</root>

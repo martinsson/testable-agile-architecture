@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="bee" class="no-js" ng-controller="GlobalController">
+<head>
+    <!--<script src="http://192.168.1.200:8080/target/target-script-min.js#anonymous"></script>-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="msapplication-TileColor" content="#c0f003">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <script>
+        window.name = "NG_DEFER_BOOTSTRAP!"
+        var engineUrl = window.engineUrl || ""
+
+        function loadFile(fileUrl, type, attributes) {
+            type = type || "script"
+            attributes = attributes || {}
+
+            var htmlEl = document.createElement(type)
+            var correctedUrl = engineUrl + fileUrl
+            if (type == "script") {
+                htmlEl.src = correctedUrl
+            } else {
+                htmlEl.setAttribute("href", correctedUrl)
+            }
+            htmlEl.async = false
+
+
+            for (var att in attributes) {
+                htmlEl.setAttribute(att, attributes[att])
+            }
+
+            document.head.appendChild(htmlEl)
+        }
+
+        loadFile('beevirtua.css', 'link', {rel:'stylesheet', type:'text/css'})
+
+
+        loadFile('node_modules/lie/dist/lie.polyfill.min.js')
+loadFile('node_modules/angular/angular.js')
+loadFile('node_modules/lodash/lodash.min.js')
+loadFile('node_modules/async/lib/async.js')
+loadFile('node_modules/angular-messages/angular-messages.js')
+loadFile('node_modules/angular-sanitize/angular-sanitize.js')
+loadFile('node_modules/device.js/lib/device.min.js')
+loadFile('vendor/hammerjs-2.0.4/hammer.js')
+loadFile('vendor/createJS/easeljs-0.8.0.js')
+loadFile('vendor/createJS/tweenjs-0.6.0.combined.js')
+loadFile('vendor/createJS/movieclip-0.8.0.combined.js')
+loadFile('vendor/createJS/preloadjs-0.6.0.combined.js')
+loadFile('vendor/createJS/soundjs-0.6.0.combined.js')
+loadFile('beevirtua.js')
+
+
+
+    </script>
+    <!---->
+</head>
+
+<body ng-keydown="handleKeydown($event)" ng-class="{ 'fullPage': fullPage }">
+</body>
+</html>
