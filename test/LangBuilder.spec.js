@@ -15,6 +15,19 @@ describe('LangBuilder.buildLang()', function () {
 
     describe('lang.id', function () {
         it('is the language found in the pdf file', function () {
+            var myQueue = {
+                submit: function () {}
+            };
+            var pdfUtility = {getPdfInfo: sinon.stub()};
+            pdfUtility.getPdfInfo.returns({lang: "cn"})
+            var langBuilder = new LangBuilder(myQueue, pdfUtility);
+
+            var parentEntityKey = EntityKey.fromPath("/region/eu");
+            var pdPath = "/tmp/pdfFile.pdf";
+
+            var lang = langBuilder.buildLang(parentEntityKey, pdPath);
+
+            expect(lang.id).to.equal("cn");
 
         });
         it('can be explicitly overridden', function () {
@@ -34,21 +47,19 @@ describe('LangBuilder.buildLang()', function () {
         });
         it('is french by default', function () {
 
+            var myQueue = {
+                submit: function () {}
+            };
+            var langBuilder = new LangBuilder(myQueue, pdfUtility);
+
+            var parentEntityKey = EntityKey.fromPath("/region/eu");
+            var pdPath = "/tmp/pdfFile.pdf";
+
+            var lang = langBuilder.buildLang(parentEntityKey, pdPath);
+
+            expect(lang.id).to.equal("fr");
+
         });
-    });
-
-    describe('lang.face', function () {
-        it('is a collection of pages in the pdf file', function () {
-
-        });
-        describe('every face', function () {
-            it('has the width and height of the first page', function () {
-
-            });
-            it('has a unique id', function () {
-
-            });
-        })
     });
 
     describe('sends a splitJob to the message queue', function () {
@@ -65,5 +76,35 @@ describe('LangBuilder.buildLang()', function () {
             sinon.assert.calledWith(myQueue.submit, sinon.match(expectedPayload))
 
         })
-    })
+    });
+
+    describe('lang.face', function () {
+        it('is a collection of pages in the pdf file', function () {
+
+            var myQueue = {
+                submit: function () {}
+            };
+
+            var pdfUtility = {getPdfInfo: sinon.stub()};
+            pdfUtility.getPdfInfo.returns({numberOfPages:7})
+
+            var langBuilder = new LangBuilder(myQueue, pdfUtility);
+
+            var parentEntityKey = EntityKey.fromPath("/region/eu");
+            var pdPath = "/tmp/pdfFile.pdf";
+
+            var lang = langBuilder.buildLang(parentEntityKey, pdPath);
+
+            expect(lang.face).to.have.length(7);
+        });
+        describe('every face', function () {
+            it('has the width and height of the first page', function () {
+
+            });
+            it('has a unique id', function () {
+
+            });
+        })
+    });
+
 });

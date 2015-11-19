@@ -6,6 +6,8 @@ var kue = require('kue');
  * @param splitJobConfig
  * @returns {{submit: submit}}
  */
+
+
 function myQueue(redisConfig, splitJobConfig) {
     var jobQueue = kue.createQueue(redisConfig);
 
