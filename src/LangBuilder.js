@@ -6,12 +6,12 @@ var nodeUuid = require('node-uuid');
 var Face = require('./restOfTheCode/Face');
 
 
-function LangBuilder(jobQueue, pdfUtility) {
-    var queue = jobQueue;
+function LangBuilder(kue, redisconfig, pdfUtility) {
     var splitJobConfig = {
         queueName: 'job-split-pdf',
         attempts: 5
     };
+    var queue = kue.createQueue(redisconfig);
 
     function submitBackgroundJob(parentEntityKey, lang, pdfAbsolutePath) {
         var langEntityKey = parentEntityKey.append('lang', lang.id);
@@ -24,7 +24,7 @@ function LangBuilder(jobQueue, pdfUtility) {
     return {
         buildLang: function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
 
-            var lang = buildLang(pdfAbsolutePath, forcedLangId);
+            var lang = makeLang(pdfAbsolutePath, forcedLangId);
 
             submitBackgroundJob(parentEntityKey, lang, pdfAbsolutePath);
 
@@ -32,7 +32,7 @@ function LangBuilder(jobQueue, pdfUtility) {
         }
     };
 
-    function buildLang(pdfAbsolutePath, forcedLangId) {
+    function makeLang(pdfAbsolutePath, forcedLangId) {
         var pdfInfo = pdfUtility.getPdfInfo(pdfAbsolutePath);
         var langId = defineLang(forcedLangId, pdfInfo);
         var faces = buildFaces(pdfInfo);

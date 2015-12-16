@@ -19,16 +19,20 @@ describe('LangBuilder.buildLang()', function () {
         });
         it('can be explicitly overridden', function () {
 
-            var jobQueue = {
-                create: function () {
+            var kue = {
+                createQueue: function () {
                     return {
-                        attempts: function () {
-                            return {save: sinon.stub()}
+                        create: function () {
+                            return {
+                                attempts: function () {
+                                    return {save: sinon.stub()}
+                                }
+                            }
                         }
-                    }
+                    };
                 }
-            };
-            var langBuilder = new LangBuilder(jobQueue, pdfUtility);
+            }
+            var langBuilder = new LangBuilder(kue, {}, pdfUtility);
 
             var parentEntityKey = EntityKey.fromPath("/region/eu");
             var pdPath = "/tmp/pdfFile.pdf";
@@ -58,7 +62,7 @@ describe('LangBuilder.buildLang()', function () {
     });
 
     describe('sends a splitJob to the message queue', function () {
-        it('contains the path of the pdf', function() {
+        it('contains the path of the pdf', function () {
             var saveSpy = sinon.spy();
 
             var attemptsStub = sinon.stub();
@@ -72,11 +76,15 @@ describe('LangBuilder.buildLang()', function () {
                 .withArgs('job-split-pdf', sinon.match(expectedPayload))
                 .returns({attempts: attemptsStub});
 
-            var jobQueue = {
-                create: createStub
-            };
+            var redisconfig = {};
+            var createQueueStub = sinon.stub();
+            createQueueStub
+                .withArgs(redisconfig)
+                .returns({create: createStub});
 
-            var langBuilder = new LangBuilder(jobQueue, pdfUtility);
+            var kue = {createQueue: createQueueStub};
+
+            var langBuilder = new LangBuilder(kue, redisconfig, pdfUtility);
 
             langBuilder.buildLang(parentEntityKey, pdPath);
 
