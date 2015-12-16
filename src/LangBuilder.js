@@ -17,7 +17,7 @@ function LangBuilder(myQueue, pdfUtility) {
     return {
         buildLang: function (parentEntityKey, pdfAbsolutePath, forcedLangId) {
 
-            var lang = buildLang(pdfAbsolutePath, forcedLangId);
+            var lang = makeLang(pdfAbsolutePath, forcedLangId);
 
             submitBackgroundJob(parentEntityKey, lang, pdfAbsolutePath);
 
@@ -25,7 +25,7 @@ function LangBuilder(myQueue, pdfUtility) {
         }
     };
 
-    function buildLang(pdfAbsolutePath, forcedLangId) {
+    function makeLang(pdfAbsolutePath, forcedLangId) {
         var pdfInfo = pdfUtility.getPdfInfo(pdfAbsolutePath);
         var langId = defineLang(forcedLangId, pdfInfo);
         var faces = buildFaces(pdfInfo);
